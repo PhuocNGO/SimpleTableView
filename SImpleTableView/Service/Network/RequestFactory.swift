@@ -2,8 +2,8 @@
 //  RequestFactory.swift
 //  SImpleTableView
 //
-//  Created by Phuoc Ngo on 2/21/20.
-//  Copyright © 2020 Phuoc Ngo. All rights reserved.
+//  Created by Tommy Ngo on 2/21/20.
+//  Copyright © 2020 Ngo. All rights reserved.
 //
 
 import Foundation

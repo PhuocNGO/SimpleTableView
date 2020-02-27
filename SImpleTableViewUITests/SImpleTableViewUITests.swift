@@ -2,8 +2,8 @@
 //  SImpleTableViewUITests.swift
 //  SImpleTableViewUITests
 //
-//  Created by Phuoc Ngo on 2/19/20.
-//  Copyright © 2020 Phuoc Ngo. All rights reserved.
+//  Created by Tommy Ngo on 2/19/20.
+//  Copyright © 2020 Ngo. All rights reserved.
 //
 
 import XCTest

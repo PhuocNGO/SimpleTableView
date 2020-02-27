@@ -90,3 +90,6 @@ fastlane/test_output
 iOSInjectionProject/
 ._SImpleTableView.xcodeproj
 ._.gitignore
+._CommentViewModel.swift
+._*.swift
+._Main.storyboard
