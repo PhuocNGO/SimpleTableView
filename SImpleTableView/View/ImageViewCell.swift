@@ -10,6 +10,11 @@ import UIKit
 
 class ImageViewCell: UICollectionViewCell {
     static var reuseIdentifier: String = "ImageViewCell"
+    
+    let activityIndicator: UIActivityIndicatorView = {
+        return UIActivityIndicatorView(style: .medium)
+    }()
+    
     let imageView : UIImageView = {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
@@ -27,7 +32,17 @@ class ImageViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        imageView.image = nil
+        set(image: nil)
+    }
+    
+    func set(image: UIImage?) {
+        imageView.image = image
+        
+        if image == nil {
+            activityIndicator.startAnimating()
+        } else {
+            activityIndicator.stopAnimating()
+        }
     }
     
     private func setupView() {
@@ -42,5 +57,11 @@ class ImageViewCell: UICollectionViewCell {
                          left: leftAnchor,
                          bottom: bottomAnchor,
                          right: rightAnchor)
+        
+        self.addSubview(activityIndicator)
+        activityIndicator.anchor(top: topAnchor,
+                                 left: leftAnchor,
+                                 bottom: bottomAnchor,
+                                 right: rightAnchor)
     }
 }

@@ -9,11 +9,15 @@
 import UIKit
 
 class CommentViewModel: GenericDataSource<CommentModel> {
+    
     var postID: Int {
         didSet { service?.postID = postID }
     }
     var service: CommentService?
     var onErrorHandling : ((ErrorResult?) -> Void)?
+    var delegate: ImageTaskDownloadedDelegate?
+    
+    var imageTasks  = [Int: ImageTask]()
     
     init(_ postID: Int) {
         self.postID = postID
@@ -32,6 +36,7 @@ class CommentViewModel: GenericDataSource<CommentModel> {
                 switch result {
                 case .success(let comments):
                     self.data.value = comments
+                    self.setupImageTasks()
                 case .failure(let error):
                     self.onErrorHandling?(error)
                 }
@@ -39,18 +44,17 @@ class CommentViewModel: GenericDataSource<CommentModel> {
         }
     }
     
-    func fetchImage(from id: Int, completionHandler: @escaping (_ data: Data?) -> ()) {
-        let session = URLSession.shared
-        let url = URL(string: "https://i.picsum.photos/id/\(id)/100/100.jpg")
-        let dataTask = session.dataTask(with: url!) { (data, response, error) in
-            if error != nil {
-                print("Error fetching the image! 😢")
-                completionHandler(nil)
-            } else {
-                completionHandler(data)
-            }
+    private func setupImageTasks() {
+        let session = URLSession(configuration: URLSessionConfiguration.default)
+        for (i, comment) in self.data.value.enumerated() {
+            let url = URL(string: getImageUrlFor(id: comment.id))!
+            let imageTask = ImageTask(position: i, url: url, session: session, delegate: delegate)
+            imageTasks[i] = imageTask
         }
-        dataTask.resume()
+    }
+    
+    internal func getImageUrlFor(id: Int) -> String {
+        return "https://i.picsum.photos/id/\(id)/100/100.jpg"
     }
 }
 
@@ -61,20 +65,18 @@ extension CommentViewModel : UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageViewCell.reuseIdentifier, for: indexPath) as! ImageViewCell
-        let comment = self.data.value[indexPath.row]
-        fetchImage(from: comment.id) { (imageData) in
-            if let data = imageData {
-                // referenced imageView from main thread
-                // as iOS SDK warns not to use images from
-                // a background thread
-                DispatchQueue.main.async {
-                    cell.imageView.image = UIImage(data: data)
-                }
-            } else {
-                // show as an alert if you want to
-                print("Error loading image");
-            }
-        }
+        imageTasks[indexPath.row]?.resume()
+        cell.set(image: imageTasks[indexPath.row]?.image)
         return cell
+    }
+}
+
+extension CommentViewModel : UICollectionViewDataSourcePrefetching {
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        indexPaths.forEach( { imageTasks[$0.row]?.resume() })
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+        indexPaths.forEach( { imageTasks[$0.row]?.pause() })
     }
 }

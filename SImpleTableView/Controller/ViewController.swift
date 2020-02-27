@@ -12,7 +12,9 @@ class ViewController: UIViewController {
     weak var tableView: UITableView!
     
     lazy var viewModel: PostViewModel = { [unowned self] in
-        return PostViewModel()
+        let vm = PostViewModel()
+        vm.delegate = self
+        return vm
     }()
     
     override func loadView() {
@@ -37,6 +39,7 @@ class ViewController: UIViewController {
         self.tableView.estimatedRowHeight = 100
         self.tableView.rowHeight = UITableView.automaticDimension
         self.tableView.dataSource = viewModel
+        self.tableView.prefetchDataSource = viewModel
         self.viewModel.data.addObserverAndFire(self) { [weak self] _ in
             self?.tableView.reloadData()
         }
@@ -49,5 +52,11 @@ class ViewController: UIViewController {
             self?.present(controller, animated: true, completion: nil)
         }
         self.viewModel.fetchPosts()
+    }
+}
+
+extension ViewController : ImageTaskDownloadedDelegate {
+    func imageDownloaded(position: Int) {
+        self.tableView.reloadRows(at: [IndexPath(row: position, section: 0)], with: .fade)
     }
 }

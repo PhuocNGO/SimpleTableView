@@ -19,9 +19,14 @@ class InfoTableViewCell: UITableViewCell {
         }
     }
     lazy var viewModel: CommentViewModel = { [unowned self] in
-        return CommentViewModel(id)
+        let vm = CommentViewModel(id)
+        vm.delegate = self
+        return vm
     }()
     
+    let activityIndicator: UIActivityIndicatorView = {
+        return UIActivityIndicatorView(style: .medium)
+    }()
     
     let profileImageView : UIImageView = {
         let iv = UIImageView()
@@ -82,19 +87,31 @@ class InfoTableViewCell: UITableViewCell {
         profileImageView.image = nil
         titleLabel.text = ""
         bodyLabel.text = ""
-        viewModel.data.value = []
+    }
+    
+    func setContent(_ post: PostModel) {
+        id = post.id
+        titleLabel.text = post.title
+        bodyLabel.text = post.body
     }
     
     private func setupView() {
         initData()
-        
         let marginGuide = contentView.layoutMarginsGuide
+        
+        
         
         self.contentView.addSubview(profileImageView)
         profileImageView.anchor(top: marginGuide.topAnchor,
                                 left: marginGuide.leftAnchor,
                                 width: 90,
                                 height: 90)
+        
+        profileImageView.addSubview(activityIndicator)
+        activityIndicator.anchor(top: profileImageView.topAnchor,
+                                 left: profileImageView.leftAnchor,
+                                 bottom: profileImageView.bottomAnchor,
+                                 right: profileImageView.rightAnchor)
 
         self.contentView.addSubview(titleLabel)
         titleLabel.anchor(leading: profileImageView.trailingAnchor,
@@ -110,11 +127,28 @@ class InfoTableViewCell: UITableViewCell {
         
         self.contentView.addSubview(collectionView)
         collectionView.dataSource = viewModel
+        collectionView.prefetchDataSource = viewModel
         collectionView.anchor(leading: marginGuide.leadingAnchor,
                               trailing: marginGuide.trailingAnchor,
                               top: bodyLabel.bottomAnchor,
                               bottom: marginGuide.bottomAnchor,
                               paddingTop: 10,
                               height: 60)
+    }
+    
+    func set(image: UIImage?) {
+        profileImageView.image = image
+        
+        if image == nil {
+            activityIndicator.startAnimating()
+        } else {
+            activityIndicator.stopAnimating()
+        }
+    }
+}
+
+extension InfoTableViewCell : ImageTaskDownloadedDelegate {
+    func imageDownloaded(position: Int) {
+        self.collectionView.reloadItems(at: [IndexPath(row: position, section: 0)])
     }
 }

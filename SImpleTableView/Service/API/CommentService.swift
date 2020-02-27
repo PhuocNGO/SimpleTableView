@@ -11,6 +11,7 @@ import Foundation
 final class CommentService: RequestHandler {
     var postID: Int
     var task : URLSessionTask?
+    var imageTask: ImageTask?
     
     init(_ postID: Int) {
         self.postID = postID
