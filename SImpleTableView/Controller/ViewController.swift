@@ -57,6 +57,9 @@ class ViewController: UIViewController {
 
 extension ViewController : ImageTaskDownloadedDelegate {
     func imageDownloaded(position: Int) {
-        self.tableView.reloadRows(at: [IndexPath(row: position, section: 0)], with: .fade)
+        let indexPath = IndexPath(row: position, section: 0)
+        if tableView.indexPathsForVisibleRows?.contains(indexPath) == true {
+            self.tableView.reloadRows(at: [indexPath], with: .none)
+        }
     }
 }

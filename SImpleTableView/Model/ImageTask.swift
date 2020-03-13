@@ -58,21 +58,24 @@ class ImageTask {
     }
 
     private func downloadTaskCompletionHandler(url: URL?, response: URLResponse?, error: Error?) {
-        if let error = error {
-            print("Error downloading: ", error)
+        defer {
+            DispatchQueue.main.async {
+                self.delegate?.imageDownloaded(position: self.position)
+            }
+            self.isFinishedDownloading = true
+        }
+
+        guard error == nil,
+              let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200,
+              let url = url,
+              let data = FileManager.default.contents(atPath: url.path),
+              let image = UIImage(data: data)
+        else {
+            print("Error downloading: ", error?.localizedDescription ?? "image not exist")
+            self.image = #imageLiteral(resourceName: "FailImage")
             return
         }
-
-        guard let url = url else { return }
-        guard let data = FileManager.default.contents(atPath: url.path) else { return }
-        guard let image = UIImage(data: data) else { return }
-
-        DispatchQueue.main.async {
-            self.image = image
-            self.delegate?.imageDownloaded(position: self.position)
-        }
-
-        self.isFinishedDownloading = true
+        self.image = image
     }
 }
 

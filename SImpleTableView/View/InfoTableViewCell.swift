@@ -31,7 +31,7 @@ class InfoTableViewCell: UITableViewCell {
     let profileImageView : UIImageView = {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
-        iv.backgroundColor = .red
+        iv.backgroundColor = .gray
         return iv
     }()
     

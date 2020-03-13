@@ -49,7 +49,7 @@ class PostViewModel: GenericDataSource<PostModel> {
     }
     
     internal func getImageUrlFor(post: PostModel) -> String {
-        return "https://via.placeholder.com/100x100.png?text=\(post.userID)-\(post.id)"
+        return "https://i.picsum.photos/id/\(post.id)/200/200.jpg"
     }
 }
 
