@@ -10,7 +10,7 @@ import Foundation
 
 class ImageModel: Decodable {
     
-    // MARK: - Properties
+    /// MARK: - Properties
     let id: String
     let author: String
     let width: Int
@@ -18,7 +18,7 @@ class ImageModel: Decodable {
     let url: URL
     let downloadURL: URL
     
-    // MARK: -  Structures
+    /// MARK: -  Structures
     private enum CodingKeys: String, CodingKey {
         case id           = "id"
         case author       = "author"
@@ -28,7 +28,7 @@ class ImageModel: Decodable {
         case downloadURL  = "download_url"
     }
     
-    // MARK: -   Decodable
+    /// MARK: -   Decodable
     required init(from decoder: Decoder) throws {
         do {
             let values  = try decoder.container(keyedBy: CodingKeys.self)

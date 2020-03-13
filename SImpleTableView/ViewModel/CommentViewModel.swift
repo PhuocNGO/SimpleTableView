@@ -44,6 +44,8 @@ class CommentViewModel: GenericDataSource<CommentModel> {
         }
     }
     
+    /// Set up image task for downloading
+    /// image from image url.
     private func setupImageTasks() {
         let session = URLSession(configuration: URLSessionConfiguration.default)
         for (i, comment) in self.data.value.enumerated() {
@@ -53,6 +55,7 @@ class CommentViewModel: GenericDataSource<CommentModel> {
         }
     }
     
+    /// Get the url template for comment images.
     internal func getImageUrlFor(id: Int) -> String {
         return "https://i.picsum.photos/id/\(id)/100/100.jpg"
     }

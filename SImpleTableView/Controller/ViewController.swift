@@ -44,9 +44,9 @@ class ViewController: UIViewController {
             self?.tableView.reloadData()
         }
         
-        // add error handling example
+        /// add error handling example
         self.viewModel.onErrorHandling = { [weak self] error in
-            // display error ?
+            /// display error ?
             let controller = UIAlertController(title: "An error occured", message: "Oops, something went wrong!", preferredStyle: .alert)
             controller.addAction(UIAlertAction(title: "Close", style: .cancel, handler: nil))
             self?.present(controller, animated: true, completion: nil)
@@ -56,8 +56,13 @@ class ViewController: UIViewController {
 }
 
 extension ViewController : ImageTaskDownloadedDelegate {
+    
+    /// Delegate function which would be called after
+    /// download image was done.
     func imageDownloaded(position: Int) {
         let indexPath = IndexPath(row: position, section: 0)
+        
+        /// Only reload cells is visible.
         if tableView.indexPathsForVisibleRows?.contains(indexPath) == true {
             self.tableView.reloadRows(at: [indexPath], with: .none)
         }

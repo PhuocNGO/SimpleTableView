@@ -20,6 +20,7 @@ class PostViewModel: GenericDataSource<PostModel> {
         service = PostService.shared
     }
     
+    /// Fetch all posts from server
     func fetchPosts() {
         guard let service = service else {
             onErrorHandling?(ErrorResult.custom(string: "Missing service"))
@@ -39,6 +40,8 @@ class PostViewModel: GenericDataSource<PostModel> {
         }
     }
     
+    /// Set up image task for downloading
+    /// image from image url.
     private func setupImageTasks() {
         let session = URLSession(configuration: URLSessionConfiguration.default)
         for (i, post) in self.data.value.enumerated() {
@@ -48,6 +51,7 @@ class PostViewModel: GenericDataSource<PostModel> {
         }
     }
     
+    /// Get the url template for comment images.
     internal func getImageUrlFor(post: PostModel) -> String {
         return "https://i.picsum.photos/id/\(post.id)/200/200.jpg"
     }
@@ -62,6 +66,8 @@ extension PostViewModel: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: InfoTableViewCell.identifier, for: indexPath) as! InfoTableViewCell
         cell.setContent(data.value[indexPath.row])
         cell.set(image: imageTasks[indexPath.row]?.image)
+        
+        ///start downloading image with imagetask.
         imageTasks[indexPath.row]?.resume()
         return cell
     }

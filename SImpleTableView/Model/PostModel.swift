@@ -10,17 +10,17 @@ import Foundation
 
 final class PostModel: Decodable {
     
-    // MARK: - Properties
+    /// MARK: - Properties
     let userID, id: Int
     let title, body: String
     
-    // MARK: - Structures
+    /// MARK: - Structures
     enum CodingKeys: String, CodingKey {
         case userID = "userId"
         case id, title, body
     }
     
-    // MARK: Initialize
+    /// MARK: Initialize
     init(userID: Int, id: Int, title: String, body: String) {
         self.userID = userID
         self.id = id
@@ -28,7 +28,7 @@ final class PostModel: Decodable {
         self.body = body
     }
     
-    // MARK: - Decodable
+    /// MARK: - Decodable
     required init(from decoder: Decoder) throws {
         do {
             let values  = try decoder.container(keyedBy: CodingKeys.self)

@@ -33,6 +33,8 @@ class ImageTask {
         self.delegate = delegate
     }
 
+    /// resume a download session
+    /// we will if we paused it before
     func resume() {
         if !isDownloading && !isFinishedDownloading {
             isDownloading = true
@@ -47,6 +49,8 @@ class ImageTask {
         }
     }
 
+    /// pause a download session
+    /// and come back to it later
     func pause() {
         if isDownloading && !isFinishedDownloading {
             task?.cancel(byProducingResumeData: { (data) in
@@ -57,6 +61,8 @@ class ImageTask {
         }
     }
 
+    /// Handle when a download just done
+    /// we also check status to make sure it was not a bad url.
     private func downloadTaskCompletionHandler(url: URL?, response: URLResponse?, error: Error?) {
         defer {
             DispatchQueue.main.async {
