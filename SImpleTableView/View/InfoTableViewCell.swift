@@ -99,7 +99,7 @@ class InfoTableViewCell: UITableViewCell {
         initData()
         let marginGuide = contentView.layoutMarginsGuide
         
-        
+        self.selectionStyle = .none
         
         self.contentView.addSubview(profileImageView)
         profileImageView.anchor(top: marginGuide.topAnchor,
