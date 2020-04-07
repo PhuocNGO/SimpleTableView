@@ -38,6 +38,7 @@ class CommentViewModel: GenericDataSource<CommentModel> {
                     self.data.value = comments
                     self.setupImageTasks()
                 case .failure(let error):
+                    self.data.value = []
                     self.onErrorHandling?(error)
                 }
             }

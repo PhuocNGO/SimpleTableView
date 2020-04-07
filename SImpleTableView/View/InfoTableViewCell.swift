@@ -70,6 +70,7 @@ class InfoTableViewCell: UITableViewCell {
         setupView()
         
         self.viewModel.data.addObserverAndFire(self) { [weak self] _ in
+            self?.collectionView.isHidden = false
             self?.collectionView.reloadData()
         }
     }
@@ -87,6 +88,7 @@ class InfoTableViewCell: UITableViewCell {
         profileImageView.image = nil
         titleLabel.text = ""
         bodyLabel.text = ""
+        collectionView.isHidden = true
     }
     
     func setContent(_ post: PostModel) {
