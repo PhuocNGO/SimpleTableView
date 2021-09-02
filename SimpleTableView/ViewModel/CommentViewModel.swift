@@ -58,7 +58,7 @@ class CommentViewModel: GenericDataSource<CommentModel> {
     
     /// Get the url template for comment images.
     internal func getImageUrlFor(id: Int) -> String {
-        return "https://i.picsum.photos/id/\(id)/100/100.jpg"
+        return "https://picsum.photos/id/\(id)/100/100.jpg"
     }
 }
 

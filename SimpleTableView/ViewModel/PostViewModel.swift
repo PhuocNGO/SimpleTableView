@@ -53,7 +53,7 @@ class PostViewModel: GenericDataSource<PostModel> {
     
     /// Get the url template for comment images.
     internal func getImageUrlFor(post: PostModel) -> String {
-        return "https://i.picsum.photos/id/\(post.id)/200/200.jpg"
+        return "https://picsum.photos/id/\(post.id)/200/200.jpg"
     }
 }
 
