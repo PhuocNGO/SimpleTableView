@@ -8,18 +8,33 @@
 
 import Foundation
 
+/// Service class for handling post-related API requests.
 final class PostService: RequestHandler {
-    static let shared = PostService()
-    var task : URLSessionTask?
     
-    func fetchPost(_ completion: @escaping ((Result<[PostModel], ErrorResult>) -> Void)) {
-        self.cancelFetchPosts()
+    /// Shared instance of PostService.
+    static let shared = PostService()
+    /// The URLSessionTask responsible for the ongoing data fetch operation.
+    var task: URLSessionTask?
+
+    /// Fetches posts from the API.
+    ///
+    /// - Parameter completion: A closure to be called with the result of the fetch operation.
+    func fetchPosts(completion: @escaping (Result<[PostModel], ErrorResult>) -> Void) {
+        // Cancel any ongoing fetch operation before starting a new one
+        cancelFetchPosts()
+
+        // Construct the API endpoint for fetching posts
         let endpoint = RequestService.baseURL + "/posts"
-        task = RequestService().loadData(urlString: endpoint, completion: self.networkResult(completion: completion))
+        
+        // Load data from the API and handle the result using the networkResult closure
+        task = RequestService().loadData(urlString: endpoint, completion: networkResult(completion: completion))
     }
 
+    /// Cancels the ongoing fetch operation for posts.
     func cancelFetchPosts() {
+        // Cancel the URLSessionTask if it's currently active
         task?.cancel()
         task = nil
     }
 }
+

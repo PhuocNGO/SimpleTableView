@@ -9,39 +9,43 @@
 import Foundation
 
 class RequestHandler {
-    func networkResult<T: Parcelable>(completion: @escaping ((Result<[T], ErrorResult>) -> Void)) -> ((Result<Data, ErrorResult>) -> Void) {
+    
+    // MARK: - Network Result Handling
+    
+    /// Handles network result for an array of objects.
+    ///
+    /// - Parameter completion: A closure to be called with the result of the parsing.
+    /// - Returns: A closure to handle the result of a network operation.
+    func networkResult<T: Parcelable>(completion: @escaping (Result<[T], ErrorResult>) -> Void) -> (Result<Data, ErrorResult>) -> Void {
         return { dataResult in
-            
-            DispatchQueue.global(qos: .background).async(execute: {
+            DispatchQueue.global(qos: .background).async {
                 switch dataResult {
-                case .success(let data) :
+                case .success(let data):
                     ParserHelper.parse(data: data, completion: completion)
-                    break
-                case .failure(let error) :
-                    print("Network error \(error)")
+                case .failure(let error):
+                    print("Network error: \(error)")
                     completion(.failure(.network(string: "Network error " + error.localizedDescription)))
-                    break
                 }
-            })
-            
+            }
         }
     }
     
-    func networkResult<T: Parcelable>(completion: @escaping ((Result<T, ErrorResult>) -> Void)) -> ((Result<Data, ErrorResult>) -> Void) {
-           return { dataResult in
-               
-               DispatchQueue.global(qos: .background).async(execute: {
-                   switch dataResult {
-                   case .success(let data) :
-                       ParserHelper.parse(data: data, completion: completion)
-                       break
-                   case .failure(let error) :
-                       print("Network error \(error)")
-                       completion(.failure(.network(string: "Network error " + error.localizedDescription)))
-                       break
-                   }
-               })
-               
-           }
-       }
+    /// Handles network result for a single object.
+    ///
+    /// - Parameter completion: A closure to be called with the result of the parsing.
+    /// - Returns: A closure to handle the result of a network operation.
+    func networkResult<T: Parcelable>(completion: @escaping (Result<T, ErrorResult>) -> Void) -> (Result<Data, ErrorResult>) -> Void {
+        return { dataResult in
+            DispatchQueue.global(qos: .background).async {
+                switch dataResult {
+                case .success(let data):
+                    ParserHelper.parse(data: data, completion: completion)
+                case .failure(let error):
+                    print("Network error: \(error)")
+                    completion(.failure(.network(string: "Network error " + error.localizedDescription)))
+                }
+            }
+        }
+    }
 }
+

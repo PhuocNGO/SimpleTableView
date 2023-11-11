@@ -8,11 +8,21 @@
 
 import Foundation
 
+// MARK: - Parcelable Protocol
+
 protocol Parcelable {
     static func parseObject(dictionary: [String: AnyObject]) -> Result<Self, ErrorResult>
 }
 
 final class ParserHelper {
+    
+    // MARK: Single Object Parsing
+        
+    /// Parse a single object from JSON data.
+    ///
+    /// - Parameters:
+    ///   - data: The JSON data to parse.
+    ///   - completion: A closure to be called with the result of the parsing.
     
     static func parse<T: Parcelable>(data: Data, completion: (Result<T, ErrorResult>) -> Void) {
         do {
@@ -35,6 +45,14 @@ final class ParserHelper {
         }
     }
     
+    // MARK: Array of Objects Parsing
+    
+    /// Parse an array of objects from JSON data.
+    ///
+    /// - Parameters:
+    ///   - data: The JSON data to parse.
+    ///   - completion: A closure to be called with the result of the parsing.
+    
     static func parse<T: Parcelable>(data: Data, completion: (Result<[T], ErrorResult>) -> Void) {
         do {
             guard let result = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [AnyObject]  else {
@@ -48,18 +66,36 @@ final class ParserHelper {
                     continue
                 }
                 
-                switch T.parseObject(dictionary: dictionary) {
-                case .failure(_):
-                    continue
-                case .success(let newModel):
-                    finalResult.append(newModel)
-                    break
+                handleParsedObject(T.self, from: dictionary) { result in
+                    switch result {
+                    case .success(let newModel):
+                        finalResult.append(newModel)
+                    case .failure:
+                        break
+                    }
                 }
             }
             completion(.success(finalResult))
         } catch {
-            // can't parse json
             completion(.failure(.parser(string: "Error while parsing json data")))
+        }
+    }
+    
+    // MARK: Private Helper Method
+        
+    /// Handles parsing of an individual object.
+    ///
+    /// - Parameters:
+    ///   - type: The type of the object to parse.
+    ///   - dictionary: The dictionary containing the object data.
+    ///   - completion: A closure to be called with the result of the parsing.
+    
+    private static func handleParsedObject<T: Parcelable>(_ type: T.Type, from dictionary: [String: AnyObject], completion: @escaping (Result<T, ErrorResult>) -> Void) {
+        switch T.parseObject(dictionary: dictionary) {
+        case .failure(let error):
+            completion(.failure(error))
+        case .success(let model):
+            completion(.success(model))
         }
     }
 }

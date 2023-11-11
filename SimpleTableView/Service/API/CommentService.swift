@@ -8,22 +8,39 @@
 
 import Foundation
 
+/// Service class for handling comments related to posts.
 final class CommentService: RequestHandler {
-    var postID: Int
-    var task : URLSessionTask?
-    var imageTask: ImageTask?
     
-    init(_ postID: Int) {
+    /// The ID of the post for which comments are being fetched.
+    var postID: Int
+    /// The URLSessionTask responsible for the ongoing data fetch operation.
+    var task: URLSessionTask?
+
+    /// Initializes a new instance of CommentService with a specified post ID.
+    ///
+    /// - Parameters 
+    ///     - postID: The ID of the post for which comments will be fetched.
+    init(postID: Int) {
         self.postID = postID
     }
     
-    func fetchComments(_ completion: @escaping ((Result<[CommentModel], ErrorResult>) -> Void)) {
-        self.cancelFetchPosts()
+    /// Fetches comments for a specific post.
+    ///
+    /// - Parameter completion: A closure to be called with the result of the fetch operation.
+    func fetchComments(completion: @escaping (Result<[CommentModel], ErrorResult>) -> Void) {
+        // Cancel any ongoing fetch operation before starting a new one
+        cancelFetchComments()
+
+        // Construct the API endpoint for fetching comments
         let endpoint = "\(RequestService.baseURL)/posts/\(postID)/comments"
-        task = RequestService().loadData(urlString: endpoint, completion: self.networkResult(completion: completion))
+        
+        // Load data from the API and handle the result using the networkResult closure
+        task = RequestService().loadData(urlString: endpoint, completion: networkResult(completion: completion))
     }
 
-    func cancelFetchPosts() {
+    /// Cancels the ongoing fetch operation for comments.
+    func cancelFetchComments() {
+        // Cancel the URLSessionTask if it's currently active
         task?.cancel()
         task = nil
     }

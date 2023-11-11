@@ -9,14 +9,21 @@
 import Foundation
 
 final class RequestFactory {
+    // Enumeration to represent HTTP methods
     enum Method: String {
-        case GET
-        case POST
-        case PUT
-        case DELETE
-        case PATCH
+        case get = "GET"
+        case post = "POST"
+        case put = "PUT"
+        case delete = "DELETE"
+        case patch = "PATCH"
     }
     
+    /// Create a URLRequest with the specified HTTP method and URL.
+    ///
+    /// - Parameters:
+    ///   - method: The HTTP method to use.
+    ///   - url: The URL for the request.
+    /// - Returns: A URLRequest configured with the specified method and URL.
     static func request(method: Method, url: URL) -> URLRequest {
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
